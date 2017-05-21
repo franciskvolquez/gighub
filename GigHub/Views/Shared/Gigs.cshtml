@@ -1,10 +1,10 @@
-﻿@model IEnumerable<GigHub.Models.Gig>
+﻿
+@model IEnumerable<GigHub.Models.Gig>
 
-@{
-    ViewBag.Title = "Home Page";
-}
 
-<ul class="gigs">
+<h1>@ViewBag.Title</h1>
+
+<ul class="gigs voffset3">
     @foreach (var gig in Model)
     {
         <li>
@@ -19,11 +19,19 @@
             <div class="details">
                 <span class="artist">
                     @gig.Artist.Name
+                    @if (Request.IsAuthenticated)
+                    {
+                        <button data-followee-id="@gig.ArtistId" class="js-toggle-following btn btn-link btn-sm pull-right">Follow</button>
+                    }
                 </span>
+                
                 <span class="genre">
                     @gig.Genre.Name
                 </span>
+                @if (Request.IsAuthenticated)
+                {
                 <button data-gig-id="@gig.Id" class="js-toggle-attendance btn btn-default btn-sm pull-right">Going?</button>
+                }
             </div>
         </li>
     }
@@ -47,6 +55,18 @@
                     alert("Something failed!");
                 });
             });
+
+            $(".js-toggle-following").click(function (e) {
+                var button = $(e.target);
+                $.post("/api/followings", { followeeId: button.attr("data-followee-id") })
+                .done(function () {
+                    button.text("Following");
+                })
+                .fail(function () {
+                    alert("Following already exists!");
+                });
+            });
+
         });
     </script>
 }

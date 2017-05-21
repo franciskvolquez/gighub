@@ -22,7 +22,8 @@ namespace GigHub.Controllers
                 .Include(g => g.Genre)
                 .Where(g => g.DateTime > DateTime.Now);
 
-            return View(upcomingGigs);
+            ViewBag.Title = "Gigs";
+            return View("Gigs", upcomingGigs);
         }
 
         public ActionResult About()
