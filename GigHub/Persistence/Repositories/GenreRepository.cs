@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace GigHub.Repositories
 {
-    public class GenreRepository
+    public class GenreRepository : IGenreRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
 
-        public GenreRepository(ApplicationDbContext context)
+        public GenreRepository(IApplicationDbContext context)
         {
             _context = context;
 

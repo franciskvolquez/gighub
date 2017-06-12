@@ -1,4 +1,3 @@
-using GigHub.Models;
 using Microsoft.Practices.Unity;
 using System.Web.Mvc;
 using Unity.Mvc5;
@@ -22,7 +21,10 @@ namespace GigHub
 
         private static void RegisterTypes(UnityContainer container)
         {
-            container.RegisterType<IApplicationDbContext, ApplicationDbContext>();
+            container.RegisterTypes(
+                AllClasses.FromLoadedAssemblies(),
+                WithMappings.FromMatchingInterface,
+                WithName.Default);
         }
 
     }
