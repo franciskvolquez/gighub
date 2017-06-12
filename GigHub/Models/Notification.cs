@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GigHub.Models
 {
-
     public class Notification
     {
         public int Id { get; private set; }
@@ -22,10 +21,10 @@ namespace GigHub.Models
         private Notification(NotificationType type, Gig gig)
         {
             if (gig == null)
-                throw new ArgumentException("gig");
+                throw new ArgumentNullException("gig");
 
-            Gig = gig;
             Type = type;
+            Gig = gig;
             DateTime = DateTime.Now;
         }
 

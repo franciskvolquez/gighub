@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GigHub.Controllers.Api;
+using GigHub.Dtos;
 using GigHub.Models;
 
 namespace GigHub.App_Start
@@ -8,9 +9,11 @@ namespace GigHub.App_Start
     {
         public MappingProfile()
         {
-            Mapper.Initialize(cfg => cfg.CreateMap<ApplicationUser, UserDto>());
-            Mapper.Initialize(cfg => cfg.CreateMap<Gig, GigDto>());
-            Mapper.Initialize(cfg => cfg.CreateMap<Notification, NotificationDto>());
+            CreateMap<ApplicationUser, UserDto>();
+            CreateMap<Genre, GenreDto>();
+            CreateMap<Gig, GigDto>();
+            CreateMap<Notification, NotificationDto>();
+
         }
     }
 }

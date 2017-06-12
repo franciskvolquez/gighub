@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GigHub.Dtos;
 using GigHub.Models;
 using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
@@ -18,17 +19,31 @@ namespace GigHub.Controllers.Api
             _context = new ApplicationDbContext();
         }
 
-        public IEnumerable<Notification> GetNewNotifications()
+        public IEnumerable<NotificationDto> GetNewNotifications()
         {
             var userId = User.Identity.GetUserId();
             var notifications = _context.UserNotifications
                 .Where(un => un.UserId == userId && !un.IsRead)
-                .Include(un => un.Notification)
                 .Select(un => un.Notification)
                 .Include(n => n.Gig.Artist)
                 .ToList();
 
-            return notifications.Select(Mapper.Map<Notification, Notification>);
+            return notifications.Select(Mapper.Map<Notification, NotificationDto>);
+        }
+
+        [HttpPost]
+        public IHttpActionResult MarkAsRead()
+        {
+            var userId = User.Identity.GetUserId();
+            var notifications = _context.UserNotifications
+                .Where(un => un.UserId == userId && !un.IsRead)
+                .ToList();
+
+            notifications.ForEach(n => n.Read());
+
+            _context.SaveChanges();
+
+            return Ok();
         }
     }
 }

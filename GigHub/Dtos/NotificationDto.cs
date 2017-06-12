@@ -1,14 +1,14 @@
-﻿using GigHub.Models;
-using System;
+﻿using System;
+using GigHub.Models;
 
-namespace GigHub.Controllers.Api
+namespace GigHub.Dtos
 {
     public class NotificationDto
     {
-        public DateTime DateTime { get; private set; }
-        public NotificationType Type { get; private set; }
-        public DateTime? OriginalDateTime { get; private set; }
-        public string OriginalValue { get; private set; }
-        public GigDto Gig { get; private set; }
+        public DateTime DateTime { get; set; }
+        public NotificationType Type { get; set; }
+        public DateTime? OriginalDateTime { get; set; }
+        public string OriginalVenue { get; set; }
+        public GigDto Gig { get; set; }
     }
 }

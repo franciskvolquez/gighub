@@ -1,5 +1,4 @@
-﻿using GigHub.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -29,7 +28,6 @@ namespace GigHub.Models
         [Required]
         public byte GenreId { get; set; }
 
-
         public ICollection<Attendance> Attendances { get; private set; }
 
         public Gig()
@@ -49,20 +47,16 @@ namespace GigHub.Models
             }
         }
 
-
-
-        public void Modify(GigFormViewModel viewModel)
+        public void Modify(DateTime dateTime, string venue, byte genre)
         {
             var notification = Notification.GigUpdated(this, DateTime, Venue);
 
-            Venue = viewModel.Venue;
-            DateTime = viewModel.GetDateTime();
-            GenreId = viewModel.Genre;
+            Venue = venue;
+            DateTime = dateTime;
+            GenreId = genre;
 
             foreach (var attendee in Attendances.Select(a => a.Attendee))
-            {
                 attendee.Notify(notification);
-            }
         }
     }
 }
