@@ -1,9 +1,12 @@
-﻿using GigHub.Controllers.Api;
+﻿using FluentAssertions;
+using GigHub.Controllers.Api;
+using GigHub.Models;
 using GigHub.Persistence;
+using GigHub.Repositories;
+using GigHub.Test.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Security.Claims;
-using System.Security.Principal;
+using System.Web.Http.Results;
 
 namespace GigHub.Test.Controllers.Api
 {
@@ -12,24 +15,40 @@ namespace GigHub.Test.Controllers.Api
     {
         private GigsController _controller;
 
+        Mock<IGigRepository> _mockRepository;
+
+
         public GigControllerTests()
         {
-            var identity = new GenericIdentity("user1@domain.com");
-            identity.AddClaim(
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", "user1@domain.com"));
-            identity.AddClaim(
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "1"));
-
-            var principal = new GenericPrincipal(identity, null);
+            _mockRepository = new Mock<IGigRepository>();
 
             var mockUoW = new Mock<IUnitOfWork>();
-            var controller = new GigsController(mockUoW.Object);
-            //controller.user
+            mockUoW.SetupGet(u => u.Gigs).Returns(_mockRepository.Object);
+
+            _controller = new GigsController(mockUoW.Object);
+            _controller.MockCurrentUser("1", "user1@domain.com");
         }
 
         [TestMethod]
-        public void TestMethod1()
+        public void Cancel_ShouldReturnNotFound_WhenNoGigWithGivenIdExists_()
         {
+            var result = _controller.Cancel(1);
+
+            result.Should().BeOfType<NotFoundResult>();
         }
+
+        [TestMethod]
+        public void Cancel_ShouldReturnNotFound_WhenGigIsCanceled()
+        {
+            var gig = new Gig();
+            gig.Cancel();
+
+            _mockRepository.Setup(r => r.GetGigWithAttendees(1)).Returns(gig);
+
+            var result = _controller.Cancel(1);
+            result.Should().BeOfType<NotFoundResult>();
+        }
+
+
     }
 }

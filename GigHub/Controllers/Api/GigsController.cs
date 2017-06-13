@@ -20,6 +20,9 @@ namespace GigHub.Controllers.Api
             var userId = User.Identity.GetUserId();
             var gig = _unitOfWork.Gigs.GetGigWithAttendees(id);
 
+            if (gig == null)
+                return NotFound();
+
             if (gig.ArtistId != userId)
                 return Unauthorized();
 
