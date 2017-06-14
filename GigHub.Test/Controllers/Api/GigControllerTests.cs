@@ -16,9 +16,10 @@ namespace GigHub.Test.Controllers.Api
         private GigsController _controller;
 
         Mock<IGigRepository> _mockRepository;
+        string _userId;
 
-
-        public GigControllerTests()
+        [TestInitialize]
+        public void TestInitialize()
         {
             _mockRepository = new Mock<IGigRepository>();
 
@@ -26,11 +27,12 @@ namespace GigHub.Test.Controllers.Api
             mockUoW.SetupGet(u => u.Gigs).Returns(_mockRepository.Object);
 
             _controller = new GigsController(mockUoW.Object);
-            _controller.MockCurrentUser("1", "user1@domain.com");
+            _userId = "1";
+            _controller.MockCurrentUser(_userId, "user1@domain.com");
         }
 
         [TestMethod]
-        public void Cancel_ShouldReturnNotFound_WhenNoGigWithGivenIdExists_()
+        public void Cancel_ShouldReturnNotFound_WhenNoGigWithGivenIdExists()
         {
             var result = _controller.Cancel(1);
 
@@ -49,6 +51,29 @@ namespace GigHub.Test.Controllers.Api
             result.Should().BeOfType<NotFoundResult>();
         }
 
+        [TestMethod]
+        public void Cancel_ShouldReturnUnauthorized_WhenCancelingAnotherUsersGig()
+        {
+            var gig = new Gig { ArtistId = _userId + "-" };
 
+            _mockRepository.Setup(r => r.GetGigWithAttendees(1)).Returns(gig);
+
+            var result = _controller.Cancel(1);
+            result.Should().BeOfType<UnauthorizedResult>();
+
+
+        }
+
+        [TestMethod]
+        public void Cancel_ShouldReturnOk_WhenValidRequest()
+        {
+            var gig = new Gig { ArtistId = _userId };
+
+            _mockRepository.Setup(r => r.GetGigWithAttendees(1)).Returns(gig);
+
+            var result = _controller.Cancel(1);
+            result.Should().BeOfType<OkResult>();
+
+        }
     }
 }
